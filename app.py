@@ -150,7 +150,7 @@ def register():
         username = request.form['username']
         password = request.form['password']
         create_user(username, password)
-        return redirect('/success')
+        return redirect('/home')
     return render_template('register.html')
 
 @app.route('/success')

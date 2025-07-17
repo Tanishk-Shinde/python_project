@@ -1,0 +1,9 @@
+flask
+flask-login
+werkzeug
+python-pptx
+PyMuPDF
+textstat
+textblob
+openai-whisper
+torch

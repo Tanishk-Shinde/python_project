@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Register</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      height: 100vh;
+      background: linear-gradient(135deg, #7928ca, #2e0249);
+      color: white;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    h2 {
+      margin-bottom: 20px;
+      font-size: 32px;
+      font-weight: bold;
+    }
+
+    form {
+      background: rgba(255, 255, 255, 0.1);
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+      backdrop-filter: blur(10px);
+      min-width: 300px;
+    }
+
+    label, input {
+      display: block;
+      width: 100%;
+      margin-bottom: 15px;
+    }
+
+    input {
+      padding: 10px;
+      border: none;
+      border-radius: 8px;
+    }
+
+    button {
+      width: 100%;
+      padding: 10px;
+      background-color: white;
+      color: #5f0da4;
+      font-weight: bold;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #ddd;
+    }
+
+    p {
+      margin-top: 15px;
+    }
+
+    a {
+      color: #ffffff;
+      text-decoration: underline;
+    }
+
+    a:hover {
+      color: #ccc;
+    }
+  </style>
+</head>
+<body>
+  <h2>Register</h2>
+  <form method="post">
+    <label>Username:</label>
+    <input name="username" type="text" required>
+
+    <label>Password:</label>
+    <input name="password" type="password" required>
+
+    <button type="submit">Register</button>
+  </form>
+  <p>Already have an account? <a href="/login">Login here</a></p>
+</body>
+</html>

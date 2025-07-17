@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Pitch Results</title>
+</head>
+<body>
+  <div class="header">
+    <img src="/static/logo.png" class="logo" alt="Logo">
+    Startup Pitch Detector Results
+    <button class="toggle-btn" onclick="toggleMode()">🌓</button>
+  </div>
+
+  <h2>Extracted Pitch Text:</h2>
+  <pre>{{ pitch_text }}</pre>
+
+  <h2>Transcribed Audio:</h2>
+  <pre>{{ transcription }}</pre>
+
+  <h2>Analysis:</h2>
+  <ul>
+    <li>Clarity Score: {{ analysis['Clarity Score'] }}/10</li>
+    <li>Completeness Score: {{ analysis['Completeness Score'] }}/10</li>
+    <li>Tone: {{ analysis['Tone'] }}</li>
+  </ul>
+
+  <h3>Pitch Sections Found:</h3>
+  <ul>
+    {% for section, status in analysis['Sections'].items() %}
+      <li>{{ section }}: {{ status }}</li>
+    {% endfor %}
+  </ul>
+
+  <h2>Feedback:</h2>
+  <ul>
+    {% for f in feedback %}
+      <li>{{ f }}</li>
+    {% endfor %}
+  </ul>
+
+  <a href="/dashboard">📊 View Dashboard</a> |
+  <a href="{{ url_for('home') }}">⬅️ Back</a>
+
+  <script>
+    function toggleMode() {
+      document.body.classList.toggle("dark");
+      localStorage.setItem("theme", document.body.classList.contains("dark") ? "dark" : "light");
+    }
+    window.onload = () => {
+      if (localStorage.getItem("theme") === "dark") document.body.classList.add("dark");
+    }
+  </script>
+</body>
+</html>

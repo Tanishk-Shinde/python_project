@@ -1,0 +1,106 @@
+[
+  {
+    "id": 1,
+    "timestamp": "2025-07-16 02:47",
+    "clarity": 10.0,
+    "completeness": 0.0,
+    "tone": "Neutral",
+    "user_id": 1
+  },
+  {
+    "id": 2,
+    "timestamp": "2025-07-16 11:25",
+    "clarity": 0,
+    "completeness": 0.0,
+    "tone": "Neutral",
+    "user_id": 1
+  },
+  {
+    "id": 3,
+    "timestamp": "2025-07-16 11:32",
+    "clarity": 0,
+    "completeness": 8.75,
+    "tone": "Neutral",
+    "user_id": 1
+  },
+  {
+    "id": 4,
+    "timestamp": "2025-07-17 12:50",
+    "clarity": 0,
+    "completeness": 8.75,
+    "tone": "Neutral",
+    "user_id": 1
+  },
+  {
+    "id": 5,
+    "timestamp": "2025-07-17 17:10",
+    "clarity": 0,
+    "completeness": 8.75,
+    "tone": "Neutral",
+    "user_id": 1
+  },
+  {
+    "id": 6,
+    "timestamp": "2025-07-17 17:23",
+    "clarity": 0,
+    "completeness": 8.75,
+    "tone": "Neutral",
+    "user_id": 1
+  },
+  {
+    "id": 7,
+    "timestamp": "2025-07-17 17:25",
+    "clarity": 0,
+    "completeness": 8.75,
+    "tone": "Neutral",
+    "user_id": 3
+  },
+  {
+    "id": 8,
+    "timestamp": "2025-07-17 17:26",
+    "clarity": 0,
+    "completeness": 8.75,
+    "tone": "Neutral",
+    "user_id": 1
+  },
+  {
+    "id": 9,
+    "timestamp": "2025-07-17 17:26",
+    "clarity": 0,
+    "completeness": 8.75,
+    "tone": "Neutral",
+    "user_id": 3
+  },
+  {
+    "id": 10,
+    "timestamp": "2025-07-17 17:33",
+    "clarity": 0,
+    "completeness": 10.0,
+    "tone": "Neutral",
+    "user_id": 3
+  },
+  {
+    "id": 11,
+    "timestamp": "2025-07-17 17:35",
+    "clarity": 0,
+    "completeness": 8.75,
+    "tone": "Neutral",
+    "user_id": 3
+  },
+  {
+    "id": 12,
+    "timestamp": "2025-07-17 17:41",
+    "clarity": 0,
+    "completeness": 10.0,
+    "tone": "Neutral",
+    "user_id": 3
+  },
+  {
+    "id": 13,
+    "timestamp": "2025-07-17 17:46",
+    "clarity": 0,
+    "completeness": 8.75,
+    "tone": "Neutral",
+    "user_id": 3
+  }
+]

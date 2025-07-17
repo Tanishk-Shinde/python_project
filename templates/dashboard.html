@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>User Dashboard</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      transition: background 0.3s, color 0.3s;
+    }
+
+    body.dark {
+      background-color: #121212;
+      color: white;
+    }
+
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 24px;
+      margin-bottom: 20px;
+    }
+
+    .logo {
+      height: 40px;
+      vertical-align: middle;
+    }
+
+    .toggle-btn {
+      font-size: 20px;
+      cursor: pointer;
+      padding: 5px 10px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 30px;
+    }
+
+    table, th, td {
+      border: 1px solid #ccc;
+    }
+
+    th, td {
+      padding: 10px;
+      text-align: center;
+    }
+
+    canvas {
+      display: block;
+      margin: 0 auto;
+    }
+
+    a {
+      display: inline-block;
+      margin-top: 20px;
+      text-decoration: none;
+      color: inherit;
+    }
+
+    body.dark a {
+      color: #90caf9;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <img src="/static/logo.png" class="logo" alt="Logo">
+    <span>Pitch Performance Dashboard</span>
+    <button class="toggle-btn" onclick="toggleMode()">🌓</button>
+  </div>
+
+  <table>
+    <tr>
+      <th>ID</th>
+      <th>Time</th>
+      <th>Clarity</th>
+      <th>Completeness</th>
+      <th>Tone</th>
+    </tr>
+    {% for r in results %}
+      <tr>
+        <td>{{ r.id }}</td>
+        <td>{{ r.timestamp }}</td>
+        <td>{{ r.clarity }}</td>
+        <td>{{ r.completeness }}</td>
+        <td>{{ r.tone }}</td>
+      </tr>
+    {% endfor %}
+  </table>
+
+  <canvas id="trendChart" width="800" height="400"></canvas>
+
+  <script>
+
+  const results = JSON.parse('{{ results | tojson | safe }}');
+
+    const ctx = document.getElementById('trendChart').getContext('2d');
+    const chartLabels = results.map(item => item.timestamp);
+    const clarityData = results.map(item => item.clarity);
+    const completenessData = results.map(item => item.completeness);
+
+    new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: chartLabels,
+        datasets: [
+          {
+            label: 'Clarity',
+            data: clarityData,
+            borderColor: 'blue',
+            backgroundColor: 'rgba(0, 0, 255, 0.1)',
+            fill: true,
+            tension: 0.4
+          },
+          {
+            label: 'Completeness',
+            data: completenessData,
+            borderColor: 'green',
+            backgroundColor: 'rgba(0, 255, 0, 0.1)',
+            fill: true,
+            tension: 0.4
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          title: {
+            display: true,
+            text: 'Pitch Clarity and Completeness Over Time'
+          }
+        }
+      }
+    });
+  </script>
+
+<a href="{{ url_for('home') }}">⬅️ Back</a>
+
+  <script>
+    function toggleMode() {
+      document.body.classList.toggle("dark");
+      localStorage.setItem("theme", document.body.classList.contains("dark") ? "dark" : "light");
+    }
+
+    window.onload = () => {
+      if (localStorage.getItem("theme") === "dark") {
+        document.body.classList.add("dark");
+      }
+    }
+  </script>
+</body>
+</html>

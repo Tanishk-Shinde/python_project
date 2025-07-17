@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Upload Pitch</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      min-height: 100vh;
+      background: linear-gradient(135deg, #8e2de2, #4a00e0);
+      color: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      transition: background 0.3s, color 0.3s;
+    }
+
+    body.dark {
+      background: linear-gradient(135deg, #0f0f0f, #1a1a1a);
+      color: #eee;
+    }
+
+    .container {
+      text-align: center;
+      max-width: 550px;
+      width: 100%;
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
+    }
+
+    .logo {
+      height: 40px;
+    }
+
+    .toggle-btn {
+      font-size: 20px;
+      background: none;
+      border: none;
+      color: inherit;
+      cursor: pointer;
+      transition: transform 0.3s;
+    }
+
+    .toggle-btn:hover {
+      transform: scale(1.2);
+    }
+
+    h2 {
+      margin-bottom: 20px;
+      font-size: 2rem;
+    }
+
+    form {
+      background-color: rgba(255, 255, 255, 0.1);
+      padding: 30px;
+      border-radius: 20px;
+      backdrop-filter: blur(12px);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+      animation: fadeIn 0.8s ease;
+    }
+
+    label {
+      display: block;
+      margin: 15px 0 5px;
+      font-size: 1rem;
+      text-align: left;
+    }
+
+    input[type="file"] {
+      margin-bottom: 15px;
+      width: 100%;
+    }
+
+    button[type="submit"] {
+      background-color: #ffffff;
+      color: #4b0082;
+      border: none;
+      padding: 12px 25px;
+      border-radius: 10px;
+      font-weight: bold;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background 0.3s, transform 0.2s;
+    }
+
+    button[type="submit"]:hover {
+      background-color: #eee;
+      transform: translateY(-2px);
+    }
+
+    a {
+      color: #ffffff;
+      text-decoration: none;
+      margin: 0 10px;
+      transition: color 0.3s;
+      font-size: 0.95rem;
+    }
+
+    a:hover {
+      color: #ccc;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div>
+        <img src="/static/logo.png" class="logo" alt="Logo">
+        <strong style="margin-left: 10px;">Startup Pitch Detector</strong>
+      </div>
+      <button class="toggle-btn" onclick="toggleMode()">🌓</button>
+    </div>
+
+    <h2>Welcome, {{ username }}!</h2>
+
+    <form action="/upload" method="post" enctype="multipart/form-data">
+      <label>Upload Pitch Deck (.pdf or .pptx):</label>
+      <input type="file" name="pitch_file" required>
+
+      <label>Upload Audio (Optional - .mp3 or .wav):</label>
+      <input type="file" name="audio_file">
+
+      <button type="submit">Analyze Pitch</button>
+    </form>
+
+    <div style="margin-top: 20px;">
+      <a href="/dashboard">📊 View Dashboard</a> |
+      <a href="/logout">🚪 Logout</a>
+    </div>
+  </div>
+
+  <script>
+    function toggleMode() {
+      document.body.classList.toggle("dark");
+      localStorage.setItem("theme", document.body.classList.contains("dark") ? "dark" : "light");
+    }
+    window.onload = () => {
+      if (localStorage.getItem("theme") === "dark") {
+        document.body.classList.add("dark");
+      }
+    };
+  </script>
+</body>
+</html>

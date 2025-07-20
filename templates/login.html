@@ -2,102 +2,216 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Login</title>
+  <title>Login - Pitch Style</title>
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
 
     body {
-      margin: 0;
-      font-family: 'Inter', sans-serif;
       height: 100vh;
+      background: linear-gradient(-45deg, #7c05f4, #4900c5, #090033, #1a004f);
+      background-size: 400% 400%;
+      animation: gradientShift 10s ease infinite;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+      position: relative;
+    }
+
+    @keyframes gradientShift {
+      0% {
+        background-position: 0% 50%;
+      }
+      50% {
+        background-position: 100% 50%;
+      }
+      100% {
+        background-position: 0% 50%;
+      }
+    }
+
+    .background .shape {
+      position: absolute;
+      border-radius: 50%;
+      opacity: 0.2;
+      animation: float 6s infinite ease-in-out alternate;
+    }
+
+    .shape1 {
+      width: 400px;
+      height: 400px;
+      background: radial-gradient(circle, rgba(255,255,255,0.15), transparent);
+      top: -150px;
+      left: -150px;
+    }
+
+    .shape2 {
+      width: 300px;
+      height: 300px;
+      background: radial-gradient(circle, rgba(255,255,255,0.1), transparent);
+      bottom: -120px;
+      right: -150px;
+      animation-delay: 2s;
+    }
+
+    @keyframes float {
+      0% { transform: translateY(0); }
+      100% { transform: translateY(20px); }
+    }
+
+    .login-box {
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      padding: 2.5rem;
+      width: 100%;
+      max-width: 360px;
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      text-align: center;
+      z-index: 1;
+      position: relative;
+      color: #fff;
+    }
+
+    .logo {
+      width: 180px;
+      margin-bottom: 1rem;
+      display: block;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .login-box p {
+      font-size: 0.95rem;
+      margin-bottom: 1rem;
+      color: #f0f0f0;
+    }
+
+    .input {
+      width: 100%;
+      padding: 0.75rem;
+      margin-bottom: 1rem;
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 6px;
+      font-size: 0.95rem;
+      background: rgba(255, 255, 255, 0.1);
+      color: #fff;
+    }
+
+    .input::placeholder {
+      color: #ddd;
+    }
+
+    .primary-btn {
+      width: 100%;
+      padding: 0.75rem;
+      background-color: #b19bfa;
+      border: none;
+      border-radius: 6px;
+      color: #fff;
+      font-weight: 500;
+      cursor: pointer;
+      margin-bottom: 1rem;
+      transition: background 0.3s;
+    }
+
+    .primary-btn:hover {
+      background-color: #a385f8;
+    }
+
+    .or-divider {
+      text-transform: uppercase;
+      color: #ccc;
+      font-size: 0.7rem;
+      margin: 1rem 0;
+    }
+
+    .oauth-btn {
+      width: 100%;
+      padding: 0.75rem;
+      margin-bottom: 0.75rem;
+      border-radius: 6px;
+      border: 1px solid rgba(255,255,255,0.2);
+      background: rgba(255, 255, 255, 0.05);
+      cursor: pointer;
+      font-size: 0.9rem;
+      color: #fff;
       display: flex;
       align-items: center;
       justify-content: center;
-      background: linear-gradient(135deg, #6e00ff, #1e004e);
-      color: #333;
+      gap: 8px;
     }
 
-    .login-container {
-      background: #ffffff;
-      padding: 48px 32px;
-      border-radius: 20px;
-      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.25);
-      width: 100%;
-      max-width: 400px;
-      text-align: center;
+    .oauth-btn .icon {
+      width: 18px;
+      height: 18px;
     }
 
-    h2 {
-      font-size: 30px;
-      font-weight: 700;
-      margin-bottom: 24px;
-      color: #1e004e;
+    .footer-text {
+      font-size: 0.75rem;
+      color: #ddd;
+      margin-top: 1rem;
     }
 
-    input[type="text"],
-    input[type="password"] {
-      width: 100%;
-      padding: 14px;
-      margin: 12px 0;
-      border: 1px solid #ddd;
-      border-radius: 10px;
-      background-color: #f9f9f9;
-      font-size: 16px;
-      transition: 0.3s;
-    }
-
-    input[type="text"]:focus,
-    input[type="password"]:focus {
-      outline: none;
-      border-color: #a673ff;
-      background-color: #fff;
-      box-shadow: 0 0 0 2px #a673ff33;
-    }
-
-    button {
-      background-color: #a673ff;
-      color: white;
-      padding: 14px 24px;
-      border: none;
-      border-radius: 10px;
-      font-size: 16px;
-      font-weight: 600;
-      cursor: pointer;
-      margin-top: 20px;
-      transition: 0.3s;
-    }
-
-    button:hover {
-      background-color: #cfa2ff;
-      transform: scale(1.03);
-    }
-
-    p {
-      margin-top: 20px;
-      font-size: 14px;
-      color: #444;
-    }
-
-    a {
-      color: #a673ff;
+    .footer-text a {
+      color: #e0cfff;
       text-decoration: none;
-      font-weight: 600;
     }
 
-    a:hover {
-      color: #6e00ff;
+    .success-message {
+      color: #7fff7f;
+      margin-bottom: 1rem;
+      font-size: 0.85rem;
     }
   </style>
 </head>
 <body>
-  <div class="login-container">
-    <h2>Login</h2>
-    <form method="post">
-      <input type="text" name="username" placeholder="Username" required>
-      <input type="password" name="password" placeholder="Password" required>
-      <button type="submit">Login</button>
-    </form>
-    <p>Don't have an account? <a href="/register">Register here</a></p>
+  <div class="background">
+    <div class="shape shape1"></div>
+    <div class="shape shape2"></div>
   </div>
+<form method="POST" action="/login"></form>
+  <div class="login-box">
+    <img src="WhatsApp_Image_2025-07-16_at_1.14.27_PM-removebg-preview.png" alt="Pitch Logo" class="logo">
+    <p>Sign in to continue or create your account.</p>
+    <input type="email" id="emailInput" placeholder="Work email" class="input">
+    <button class="primary-btn" id="emailBtn">Continue with email</button>
+    <div id="message" class="success-message"></div>
+    <div class="or-divider">or</div>
+    <button type="button" class="oauth-btn">
+      <img src="google.png" alt="Google logo" class="icon">
+      Continue with Google
+    </button>
+    <button type="button" class="oauth-btn">
+      <img src="mac.png" alt="Apple logo" class="icon">
+      Continue with Apple
+    </button>
+    <button type="button" class="oauth-btn">Single sign-on (SSO)</button>
+    <p class="footer-text">
+      <small>Review our <a href="#">Terms</a> and <a href="#">Privacy Policy</a>.</small>
+    </p>
+  </div>
+</form>
+  <script>
+    const emailBtn = document.getElementById('emailBtn');
+    const emailInput = document.getElementById('emailInput');
+    const message = document.getElementById('message');
+
+
+      message.style.color = '#7fff7f';
+      message.textContent = 'Submitted Successfully! Redirecting...';
+
+      setTimeout(() => {
+        window.location.href = 'login.html'; // Redirect
+      }, 1000);
+
+  </script>
 </body>
 </html>

@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PitchPerfect - Pitch Deck Analyzer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #6B73FF 0%, #000DFF 100%);
+        }
+        .pulse-animation {
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        .progress-circle {
+            stroke-dasharray: 189;
+            stroke-dashoffset: 189;
+            transition: stroke-dashoffset 1s ease-in-out;
+        }
+        .progress-percentage {
+            transition: opacity 0.5s ease-in-out;
+        }
+        .category-dot {
+            width: 12px;
+            height: 12px;
+            display: inline-block;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+    </style>
+</head>
+<body class="font-sans bg-gray-50">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex">
+                    <div class="flex-shrink-0 flex items-center">
+                        <div class="w-10 h-10 rounded-full gradient-bg flex items-center justify-center text-white font-bold text-xl">PP</div>
+                        <span class="ml-2 text-xl font-semibold text-gray-900">PitchPerfect</span>
+                    </div>
+                </div>
+                <div class="hidden sm:ml-6 sm:flex sm:items-center">
+                    <button class="px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white gradient-bg hover:opacity-90 transition">
+                        Sign In
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- Upload Section -->
+        <div class="bg-white shadow rounded-lg p-6 mb-8">
+            <h1 class="text-2xl font-bold text-gray-900 mb-6">Analyze Your Pitch Deck</h1>
+            
+            <div class="grid md:grid-cols-2 gap-8">
+                <!-- Upload Card -->
+                <div class="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-blue-500 transition cursor-pointer" id="uploadCard">
+                    <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-blue-100">
+                        <svg class="h-6 w-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                        </svg>
+                    </div>
+                    <h3 class="mt-4 text-lg font-medium text-gray-900">Upload Pitch Deck</h3>
+                    <p class="mt-1 text-sm text-gray-500">PPT, PDF, or Google Slides</p>
+                    <input type="file" id="fileInput" class="hidden" accept=".pdf,.ppt,.pptx,.key">
+                </div>
+                
+                <!-- Record Card -->
+                <div class="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-blue-500 transition cursor-pointer" id="recordCard">
+                    <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-green-100">
+                        <svg class="h-6 w-6 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
+                        </svg>
+                    </div>
+                    <h3 class="mt-4 text-lg font-medium text-gray-900">Record Live Pitch</h3>
+                    <p class="mt-1 text-sm text-gray-500">60 second maximum</p>
+                    <button id="recordButton" class="mt-4 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white gradient-bg pulse-animation">
+                        Record Now
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Processing View (Initially Hidden) -->
+        <div id="processingView" class="bg-white shadow rounded-lg p-6 mb-8 hidden">
+            <div class="flex flex-col items-center">
+                <div class="relative w-32 h-32 mb-6">
+                    <svg class="w-full h-full" viewBox="0 0 36 36">
+                        <path d="M18 2.0845
+                            a 15.9155 15.9155 0 0 1 0 31.831
+                            a 15.9155 15.9155 0 0 1 0 -31.831"
+                            fill="none" stroke="#E5E7EB" stroke-width="3" stroke-linecap="round" />
+                        <path id="progressCircle" class="progress-circle" d="M18 2.0845
+                            a 15.9155 15.9155 0 0 1 0 31.831
+                            a 15.9155 15.9155 0 0 1 0 -31.831"
+                            fill="none" stroke="#4F46E5" stroke-width="3" stroke-linecap="round" />
+                    </svg>
+                    <div id="progressPercentage" class="absolute inset-0 flex items-center justify-center text-xl font-bold progress-percentage">0%</div>
+                </div>
+                <h2 class="text-xl font-semibold text-gray-900 mb-2">Analyzing your pitch...</h2>
+                <p class="text-gray-500 mb-6">We're evaluating your content, structure, and delivery</p>
+                <div class="w-full bg-gray-200 rounded-full h-2.5">
+                    <div id="progressBar" class="bg-blue-600 h-2.5 rounded-full" style="width: 0%"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Results Dashboard (Initially Hidden) -->
+        <div id="resultsDashboard" class="hidden">
+            <!-- Keyword Extraction -->
+            <div class="bg-white shadow rounded-lg p-6 mb-8">
+                <h2 class="text-xl font-semibold text-gray-900 mb-6">Key Terms & Themes</h2>
+                <div class="flex flex-wrap gap-2 mb-4">
+                    <span class="px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800">Startup</span>
+                    <span class="px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">SaaS</span>
+                    <span class="px-3 py-1 rounded-full text-sm font-medium bg-purple-100 text-purple-800">Market Growth</span>
+                    <span class="px-3 py-1 rounded-full text-sm font-medium bg-yellow-100 text-yellow-800">Revenue Model</span>
+                    <span class="px-3 py-1 rounded-full text-sm font-medium bg-red-100 text-red-800">User Acquisition</span>
+                </div>
+                <div class="text-sm text-gray-500">Based on 27 frequently used terms with strong business relevance</div>
+            </div>
+
+            <!-- Score Summary -->
+            <div class="bg-white shadow rounded-lg p-6 mb-8">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-xl font-semibold text-gray-900">Pitch Analysis Results</h2>
+                    <button class="px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white gradient-bg hover:opacity-90 transition">
+                        Download Full Report
+                    </button>
+                </div>
+                
+                <div class="grid md:grid-cols-3 gap-6">
+                    <!-- Overall Score -->
+                    <div class="border rounded-lg p-4 text-center">
+                        <div class="text-4xl font-bold text-gray-900 mb-2" id="overallScore">8.2</div>
+                        <div class="text-sm text-gray-500">Overall Score</div>
+                        <div class="mt-3">
+                            <div class="inline-flex items-center">
+                                <svg class="w-4 h-4 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
+                                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
+                                </svg>
+                                <span class="ml-1 text-sm font-medium text-gray-600">Good</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Pitch Quality Rating -->
+                    <div class="border rounded-lg p-4 text-center">
+                        <div class="text-xl font-bold text-gray-900 mb-2">Quality Rating</div>
+                        <div class="flex justify-center mb-1">
+                            <svg class="w-6 h-6 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
+                            </svg>
+                            <svg class="w-6 h-6 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
+                            </svg>
+                            <svg class="w-6 h-6 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
+                            </svg>
+                            <svg class="w-6 h-6 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
+                            </svg>
+                            <svg class="w-6 h-6 text-gray-300" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
+                            </svg>
+                        </div>
+                        <div class="text-sm text-gray-500">4/5 - Strong with minor improvements needed</div>
+                        <div class="mt-3">
+                            <div class="w-full bg-gray-200 rounded-full h-2">
+                                <div class="bg-green-600 h-2 rounded-full w-3/4"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Time Usage -->
+                    <div class="border rounded-lg p-4 text-center">
+                        <div class="text-xl font-bold text-gray-900 mb-2">48s / 60s</div>
+                        <div class="text-sm text-gray-500">Perfect duration</div>
+                        <div class="mt-3">
+                            <div class="w-full bg-gray-200 rounded-full h-2">
+                                <div class="bg-blue-600 h-2 rounded-full w-4/5"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Category Breakdown -->
+            <div class="bg-white shadow rounded-lg p-6 mb-8">
+                <h2 class="text-xl font-semibold text-gray-900 mb-6">Category Breakdown</h2>
+                
+                <div class="grid md:grid-cols-2 gap-6">
+                    <!-- Categories List -->
+                    <div>
+                        <div class="flex items-center mb-4 p-3 hover:bg-gray-50 rounded cursor-pointer">
+                            <span class="category-dot bg-blue-500"></span>
+                            <div class="flex-1">
+                                <div class="font-medium text-gray-900">Problem Identification</div>
+                                <div class="text-sm text-gray-500">Clearly defines customer pain points</div>
+                            </div>
+                            <div class="text-lg font-semibold">9.1</div>
+                        </div>
+                        
+                        <div class="flex items-center mb-4 p-3 hover:bg-gray-50 rounded cursor-pointer">
+                            <span class="category-dot bg-green-500"></span>
+                            <div class="flex-1">
+                                <div class="font-medium text-gray-900">Solution</div>
+                                <div class="text-sm text-gray-500">Effective solution to the problem</div>
+                            </div>
+                            <div class="text-lg font-semibold">8.7</div>
+                        </div>
+                        
+                        <div class="flex items-center mb-4 p-3 hover:bg-gray-50 rounded cursor-pointer">
+                            <span class="category-dot bg-yellow-500"></span>
+                            <div class="flex-1">
+                                <div class="font-medium text-gray-900">Market Opportunity</div>
+                                <div class="text-sm text-gray-500">Size and growth potential</div>
+                            </div>
+                            <div class="text-lg font-semibold">7.4</div>
+                        </div>
+                        
+                        <div class="flex items-center mb-4 p-3 hover:bg-gray-50 rounded cursor-pointer">
+                            <span class="category-dot bg-red-500"></span>
+                            <div class="flex-1">
+                                <div class="font-medium text-gray-900">Business Model</div>
+                                <div class="text-sm text-gray-500">Revenue generation strategy</div>
+                            </div>
+                            <div class="text-lg font-semibold">6.3</div>
+                        </div>
+                    </div>
+                    
+                    <!-- Radar Chart Placeholder -->
+                    <div class="bg-gray-50 rounded-lg flex items-center justify-center">
+                        <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/f8f5613f-c70e-4bda-ab6f-911117e5ee1a.png" alt="Radar chart visualization showing performance across categories - Problem Identification scored highest at 9.1 while Business Model scored lowest at 6.3" class="rounded-lg"/>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Strengths & Weaknesses -->
+            <div class="bg-white shadow rounded-lg p-6 mb-8">
+                <h2 class="text-xl font-semibold text-gray-900 mb-6">Key Strengths & Weaknesses</h2>
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div class="border-l-4 border-green-500 pl-4">
+                        <h3 class="text-lg font-medium text-gray-900 mb-3">Strengths</h3>
+                        <ul class="space-y-2">
+                            <li class="flex items-start">
+                                <svg class="h-5 w-5 text-green-500 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                                </svg>
+                                <span class="text-gray-700">Clear problem statement</span>
+                            </li>
+                            <li class="flex items-start">
+                                <svg class="h-5 w-5 text-green-500 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                                </svg>
+                                <span class="text-gray-700">Strong market opportunity identified</span>
+                            </li>
+                            <li class="flex items-start">
+                                <svg class="h-5 w-5 text-green-500 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                                </svg>
+                                <span class="text-gray-700">Effective visual storytelling</span>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="border-l-4 border-red-500 pl-4">
+                        <h3 class="text-lg font-medium text-gray-900 mb-3">Weaknesses</h3>
+                        <ul class="space-y-2">
+                            <li class="flex items-start">
+                                <svg class="h-5 w-5 text-red-500 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                                </svg>
+                                <span class="text-gray-700">Limited financial projections</span>
+                            </li>
+                            <li class="flex items-start">
+                                <svg class="h-5 w-5 text-red-500 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                                </svg>
+                                <span class="text-gray-700">Weak competitive differentiation</span>
+                            </li>
+                            <li class="flex items-start">
+                                <svg class="h-5 w-5 text-red-500 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                                </svg>
+                                <span class="text-gray-700">Unclear monetization strategy</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recommendations -->
+            <div class="bg-white shadow rounded-lg p-6 mb-8">
+                <h2 class="text-xl font-semibold text-gray-900 mb-6">Recommendations</h2>
+                
+                <div class="space-y-4">
+                    <div class="flex items-start">
+                        <div class="flex-shrink-0 mt-1">
+                            <div class="h-5 w-5 rounded-full bg-blue-100 flex items-center justify-center">
+                                <svg class="h-3 w-3 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="ml-3">
+                            <h3 class="text-sm font-medium text-gray-900">Business Model Clarity</h3>
+                            <div class="mt-1 text-sm text-gray-700">
+                                <p>Your revenue streams could be explained more clearly. Consider adding a simple flowchart showing how money flows into your business.</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-start">
+                        <div class="flex-shrink-0 mt-1">
+                            <div class="h-5 w-5 rounded-full bg-blue-100 flex items-center justify-center">
+                                <svg class="h-3 w-3 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="ml-3">
+                            <h3 class="text-sm font-medium text-gray-900">Market Size Validation</h3>
+                            <div class="mt-1 text-sm text-gray-700">
+                                <p>Include more third-party data to support your market size estimates. Sources like Gartner or Statista would add credibility.</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-start">
+                        <div class="flex-shrink-0 mt-1">
+                            <div class="h-5 w-5 rounded-full bg-blue-100 flex items-center justify-center">
+                                <svg class="h-3 w-3 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="ml-3">
+                            <h3 class="text-sm font-medium text-gray-900">Competitive Differentiation</h3>
+                            <div class="mt-1 text-sm text-gray-700">
+                                <p>Your unique advantages aren't visually highlighted. Consider a comparison matrix slide showing your advantages against 2-3 key competitors.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Historical Comparison -->
+            <div class="bg-white shadow rounded-lg p-6 mb-8">
+                <h2 class="text-xl font-semibold text-gray-900 mb-6">Historical Progress</h2>
+                
+                <div class="bg-gray-50 rounded-lg p-4">
+                    <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/0d953f84-af9a-48e3-9e49-13deeee2d7a1.png" alt="Line chart showing pitch score improvement over time - from 6.2 three months ago to 8.2 today" class="rounded-lg"/>
+                </div>
+            </div>
+            
+            <!-- Ideal Deck Comparison -->
+            <div class="bg-white shadow rounded-lg p-6">
+                <h2 class="text-xl font-semibold text-gray-900 mb-6">Comparison to Ideal Pitch Decks</h2>
+                
+                <div class="grid md:grid-cols-3 gap-6">
+                    <!-- Your Deck -->
+                    <div class="border rounded-lg overflow-hidden">
+                        <div class="h-32 gradient-bg flex items-center justify-center">
+                            <svg class="h-12 w-12 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                            </svg>
+                        </div>
+                        <div class="p-4">
+                            <h3 class="font-medium text-gray-900">Your Pitch Deck</h3>
+                            <div class="mt-2 flex items-center">
+                                <div class="w-full bg-gray-200 rounded-full h-2.5">
+                                    <div class="bg-blue-600 h-2.5 rounded-full w-3/4"></div>
+                                </div>
+                                <span class="ml-2 text-sm font-medium text-gray-600">75% match</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Sample A -->
+                    <div class="border rounded-lg overflow-hidden">
+                        <div class="h-32 bg-indigo-100 flex items-center justify-center">
+                            <svg class="h-12 w-12 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                            </svg>
+                        </div>
+                        <div class="p-4">
+                            <h3 class="font-medium text-gray-900">Top SaaS Deck</h3>
+                            <div class="mt-2 flex items-center">
+                                <div class="w-full bg-gray-200 rounded-full h-2.5">
+                                    <div class="bg-purple-600 h-2.5 rounded-full w-4/5"></div>
+                                </div>
+                                <span class="ml-2 text-sm font-medium text-gray-600">80% match</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Sample B -->
+                    <div class="border rounded-lg overflow-hidden">
+                        <div class="h-32 bg-green-100 flex items-center justify-center">
+                            <svg class="h-12 w-12 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                            </svg>
+                        </div>
+                        <div class="p-4">
+                            <h3 class="font-medium text-gray-900">Top Startup Deck</h3>
+                            <div class="mt-2 flex items-center">
+                                <div class="w-full bg-gray-200 rounded-full h-2.5">
+                                    <div class="bg-green-600 h-2.5 rounded-full w-full"></div>
+                                </div>
+                                <span class="ml-2 text-sm font-medium text-gray-600">100% match</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Upload card click handler
+            document.getElementById('uploadCard').addEventListener('click', function() {
+                document.getElementById('fileInput').click();
+            });
+            
+            // File input change handler
+            document.getElementById('fileInput').addEventListener('change', function(e) {
+                if (e.target.files.length > 0) {
+                    simulateAnalysis();
+                }
+            });
+            
+            // Record button click handler
+            document.getElementById('recordButton').addEventListener('click', function() {
+                simulateAnalysis();
+            });
+            
+            // Function to simulate analysis process
+            function simulateAnalysis() {
+                // Show processing view
+                document.getElementById('processingView').classList.remove('hidden');
+                
+                // Hide upload cards
+                document.getElementById('uploadCard').style.display = 'none';
+                document.getElementById('recordCard').style.display = 'none';
+                
+                // Animate progress
+                let progress = 0;
+                const progressBar = document.getElementById('progressBar');
+                const progressCircle = document.getElementById('progressCircle');
+                const progressPercentage = document.getElementById('progressPercentage');
+                
+                const interval = setInterval(function() {
+                    progress += Math.random() * 10;
+                    if (progress >= 100) progress = 100;
+                    
+                    // Update elements
+                    progressBar.style.width = `${progress}%`;
+                    progressCircle.style.strokeDashoffset = 189 - (189 * progress / 100);
+                    progressPercentage.textContent = `${Math.floor(progress)}%`;
+                    
+                    // Complete
+                    if (progress === 100) {
+                        clearInterval(interval);
+                        setTimeout(function() {
+                            document.getElementById('processingView').classList.add('hidden');
+                            document.getElementById('resultsDashboard').classList.remove('hidden');
+                        }, 1000);
+                    }
+                }, 300);
+            }
+        });
+    </script>
+</body>
+</html>

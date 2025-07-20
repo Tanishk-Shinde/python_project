@@ -4,13 +4,7 @@
   <meta charset="UTF-8">
   <title>Login - Pitch Style</title>
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    }
-
+    /* Your original CSS stays the same here */
     body {
       height: 100vh;
       background: linear-gradient(-45deg, #7c05f4, #4900c5, #090033, #1a004f);
@@ -21,18 +15,13 @@
       align-items: center;
       overflow: hidden;
       position: relative;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     }
 
     @keyframes gradientShift {
-      0% {
-        background-position: 0% 50%;
-      }
-      50% {
-        background-position: 100% 50%;
-      }
-      100% {
-        background-position: 0% 50%;
-      }
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
     }
 
     .background .shape {
@@ -149,11 +138,6 @@
       gap: 8px;
     }
 
-    .oauth-btn .icon {
-      width: 18px;
-      height: 18px;
-    }
-
     .footer-text {
       font-size: 0.75rem;
       color: #ddd;
@@ -170,6 +154,12 @@
       margin-bottom: 1rem;
       font-size: 0.85rem;
     }
+
+    .flash {
+      margin: 1rem 0;
+      font-size: 0.85rem;
+      color: #7fff7f;
+    }
   </style>
 </head>
 <body>
@@ -177,41 +167,33 @@
     <div class="shape shape1"></div>
     <div class="shape shape2"></div>
   </div>
-<form method="POST" action="/login"></form>
+
+<form method="POST" action="/login">
   <div class="login-box">
-    <img src="WhatsApp_Image_2025-07-16_at_1.14.27_PM-removebg-preview.png" alt="Pitch Logo" class="logo">
+    <img src="{{ url_for('static', filename='logo.png') }}" alt="Pitch Logo" class="logo">
     <p>Sign in to continue or create your account.</p>
-    <input type="email" id="emailInput" placeholder="Work email" class="input">
-    <button class="primary-btn" id="emailBtn">Continue with email</button>
-    <div id="message" class="success-message"></div>
+
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        <div class="flash">{{ messages[0] }}</div>
+      {% endif %}
+    {% endwith %}
+
+    <input type="text" name="username" placeholder="Username" class="input" required>
+    <input type="password" name="password" placeholder="Password" class="input" required>
+
+    <button class="primary-btn" type="submit">Login</button>
+
     <div class="or-divider">or</div>
-    <button type="button" class="oauth-btn">
-      <img src="google.png" alt="Google logo" class="icon">
-      Continue with Google
-    </button>
-    <button type="button" class="oauth-btn">
-      <img src="mac.png" alt="Apple logo" class="icon">
-      Continue with Apple
-    </button>
+    <button type="button" class="oauth-btn">Continue with Google</button>
+    <button type="button" class="oauth-btn">Continue with Apple</button>
     <button type="button" class="oauth-btn">Single sign-on (SSO)</button>
+
     <p class="footer-text">
-      <small>Review our <a href="#">Terms</a> and <a href="#">Privacy Policy</a>.</small>
-    </p>
+  <small>Don’t have an account? <a href="{{ url_for('signup') }}">Sign up</a></small><br>
+  <small>Review our <a href="#">Terms</a> and <a href="#">Privacy Policy</a>.</small>
+</p>
   </div>
 </form>
-  <script>
-    const emailBtn = document.getElementById('emailBtn');
-    const emailInput = document.getElementById('emailInput');
-    const message = document.getElementById('message');
-
-
-      message.style.color = '#7fff7f';
-      message.textContent = 'Submitted Successfully! Redirecting...';
-
-      setTimeout(() => {
-        window.location.href = 'login.html'; // Redirect
-      }, 1000);
-
-  </script>
 </body>
 </html>

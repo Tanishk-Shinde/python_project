@@ -49,3 +49,10 @@ def save_result(user_id, filename, data):
         (user_id, filename, data.get('type'), data.get('grammar_score'), data.get('readability_score', 0), data.get('final_score')))
     conn.commit()
     conn.close()
+def get_user_by_id(user_id):
+    conn = sqlite3.connect('database/users.db')
+    cur = conn.cursor()
+    cur.execute("SELECT * FROM users WHERE id = ?", (user_id,))
+    user = cur.fetchone()
+    conn.close()
+    return user

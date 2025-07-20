@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>Pitch - Sign Up</title>
   <style>
     * {
@@ -10,6 +10,7 @@
       box-sizing: border-box;
       font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
     }
+
     body {
       height: 100vh;
       display: flex;
@@ -19,11 +20,13 @@
       background-size: 400% 400%;
       animation: gradientShift 10s ease infinite;
     }
+
     @keyframes gradientShift {
       0% { background-position: 0% 50%; }
       50% { background-position: 100% 50%; }
       100% { background-position: 0% 50%; }
     }
+
     .container {
       width: 360px;
       padding: 2.5rem;
@@ -35,18 +38,22 @@
       color: #fff;
       text-align: center;
     }
+
     .logo {
       width: 140px;
       margin-bottom: 1rem;
     }
+
     h1 {
       margin-bottom: 0.5rem;
     }
+
     p {
       font-size: 0.9rem;
       color: #ddd;
       margin-bottom: 1.5rem;
     }
+
     .input-box {
       background: rgba(255, 255, 255, 0.1);
       border: 1px solid rgba(255, 255, 255, 0.2);
@@ -56,6 +63,7 @@
       align-items: center;
       padding: 0.5rem 0.75rem;
     }
+
     .input-box input {
       background: transparent;
       border: none;
@@ -64,8 +72,6 @@
       font-size: 0.9rem;
       color: #fff;
     }
-<<<<<<< HEAD
-=======
 
     .toggle-password {
       background: none;
@@ -75,7 +81,6 @@
       font-size: 1rem;
     }
 
->>>>>>> 227c8072a2e8763d2abdf7f5332a949d1ac39014
     .signup-btn {
       width: 100%;
       background: rgba(199, 179, 255, 0.7);
@@ -88,9 +93,41 @@
       cursor: pointer;
       transition: background 0.3s ease;
     }
+
     .signup-btn:hover {
       background: rgba(199, 179, 255, 1);
     }
+
+    .google-btn {
+      width: 100%;
+      padding: 0.75rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.15);
+      font-size: 0.85rem;
+      color: #fff;
+      cursor: pointer;
+    }
+
+    .google-btn img {
+      width: 18px;
+      height: 18px;
+    }
+
+    .login-link {
+      font-size: 0.8rem;
+      margin-top: 1rem;
+    }
+
+    .login-link a {
+      color: #c7b3ff;
+      text-decoration: none;
+    }
+
     .message {
       font-size: 0.8rem;
       margin-top: 10px;
@@ -98,23 +135,6 @@
   </style>
 </head>
 <body>
-<<<<<<< HEAD
-  <div class="container">
-    <img src="WhatsApp_Image_2025-07-16_at_1.14.27_PM-removebg-preview.png" alt="Pitch Logo" class="logo" />
-    <h1>Sign up</h1>
-    <p>Enter your email to create your account.</p>
-    <form action="/signup" method="POST">
-      <div class="input-box">
-        <input type="email" name="email" placeholder="Email" required />
-      </div>
-      <div class="input-box">
-        <input type="password" name="password" placeholder="Password" required />
-      </div>
-      <button type="submit" class="signup-btn">Sign Up</button>
-    </form>
-    <p id="message" class="message"></p>
-  </div>
-=======
   <form method="POST" action="{{ url_for('signup') }}">
     <div class="container">
       <img src="{{ url_for('static', filename='logo.png') }}" alt="Pitch Logo" class="logo" />
@@ -158,6 +178,5 @@
       togglePassword.textContent = type === "password" ? "👁️" : "🙈";
     });
   </script>
->>>>>>> 227c8072a2e8763d2abdf7f5332a949d1ac39014
 </body>
 </html>

@@ -1,63 +1,74 @@
-from flask import Flask, render_template, request, redirect, url_for, session, flash
+from flask import Flask, render_template, request, redirect, url_for, flash
 from flask_login import LoginManager, login_user, logout_user, login_required, UserMixin
-import sqlite3
-
+from werkzeug.security import check_password_hash, generate_password_hash
+from utils.db_utils import init_db, get_user_by_username, insert_user, get_user_by_id
+from flask_login import current_user
 app = Flask(__name__)
 app.secret_key = 'your_secret_key_here'
 
 # --- Setup Flask-Login ---
 login_manager = LoginManager()
 login_manager.init_app(app)
+login_manager.login_view = 'index'
 
-# --- Dummy User Class for Demo ---
+# --- User Class ---
 class User(UserMixin):
-    def __init__(self, id, email):
+    def __init__(self, id, username):
         self.id = id
-        self.email = email
+        self.username = username
 
 @login_manager.user_loader
 def load_user(user_id):
-    conn = sqlite3.connect('users.db')
-    cur = conn.cursor()
-    cur.execute("SELECT id, email FROM users WHERE id = ?", (user_id,))
-    row = cur.fetchone()
-    conn.close()
-    if row:
-        return User(id=row[0], email=row[1])
+    user = get_user_by_id(user_id)
+    if user:
+        return User(id=user[0], username=user[1])
     return None
 
 # --- Routes ---
+
 @app.route('/')
 def index():
     return render_template('login.html')
 
 @app.route('/login', methods=['POST'])
 def login():
-    email = request.form['email']
-    conn = sqlite3.connect('users.db')
-    cur = conn.cursor()
-
-    # Check if email exists in DB
-    cur.execute("SELECT id, email FROM users WHERE email = ?", (email,))
-    row = cur.fetchone()
-
-    if row:
-        user = User(id=row[0], email=row[1])
+    username = request.form['username']
+    password = request.form['password']
+    
+    user = get_user_by_username(username)
+    
+    if user and check_password_hash(user[2], password):
+        login_user(User(id=user[0], username=user[1]))
+        return redirect(url_for('main'))
     else:
-        # Register new user if not exists
-        cur.execute("INSERT INTO users (email) VALUES (?)", (email,))
-        conn.commit()
-        user_id = cur.lastrowid
-        user = User(id=user_id, email=email)
+        flash("Invalid username or password.")
+        return redirect(url_for('index'))
 
-    conn.close()
-    login_user(user)
-    return redirect(url_for('main'))
+@app.route('/signup', methods=['GET', 'POST'])
+def signup():
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+        password_hash = generate_password_hash(password)
+
+        if get_user_by_username(username):
+            flash("Username already exists.")
+            return redirect(url_for('signup'))
+
+        if insert_user(username, password_hash):
+            flash("Account created. Please log in.")
+            return redirect(url_for('index'))
+        else:
+            flash("Error: Could not create user.")
+            return redirect(url_for('signup'))
+
+    return render_template('signup.html')
+
 
 @app.route('/main')
 @login_required
 def main():
-    return "Welcome to PitchPerfect!"
+    return render_template('main.html', username=current_user.username)
 
 @app.route('/logout')
 @login_required
@@ -66,6 +77,5 @@ def logout():
     return redirect(url_for('index'))
 
 if __name__ == '__main__':
+    init_db()
     app.run(debug=True)
-from utils.analysis_engine import analyze_pitch
-from utils.db_utils import init_db, insert_user, get_user_by_username, save_result
